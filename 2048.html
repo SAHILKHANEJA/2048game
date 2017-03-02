@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+      <style>
+      body{
+        overflow-x:hidden; 
+      }
+      .card0 span{
+        visibility: hidden;
+      }
+      .card2{
+        background:white !important;
+        height:100%;
+      }
+      .card4{
+        background:#ede0c8 !important;
+        height:100%;
+      }
+      .card8{
+        background:#f2b179 !important;
+        height:100%;
+      }
+      .card16{
+        background:#f59563 !important;
+        height:100%;
+      }
+      .card32{
+        background:#f67c5f !important;
+        height:100%;
+      }
+      .card64{
+        background:#f65e3b !important;
+        height:100%;
+      }
+      .card128{
+        background:#edcf72 !important;
+        height:100%;
+      }
+      .card-above{
+        height:100%;
+        background:#edcf72 !important;
+        box-shadow:0px 0px 20px green;
+      }
+      </style>
+    </head>
+    <body>
+    <div class="row" style ="margin-bottom:10px !important;overflow-x:hidden;">
+          <div class="col s0 m3 l4" >&nbsp</div>
+          <div class="col s12 m6 l4 #37474f blue-grey darken-3" id="game" 
+            style="height:400px;padding:5px;"></div>
+          <div class="col s0 m3 l4">&nbsp</div>
+    </div>
+    <div class="row" style ="margin-bottom:10px !important;">
+      <div class="col s4 offset-s4">
+        <button type="button" onclick="handle_click('up')" style="width:100%;">Up
+        </button>
+      </div>
+    </div>
+    <div class ="row" style="margin-bottom:10px !important;">
+      <div class="col s4 offset-s1">
+        <button type="button" onclick="handle_click('left')" style="width:100%;">Left
+        </button>
+      </div>
+      <div class="col s4 offset-s2">
+        <button type="button" onclick="handle_click('right')" style="width:100%;">Right
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s4 offset-s4">
+        <button type="button" onclick="handle_click('down')" style="width:100%;">Down
+        </button>
+      </div>
+    </div>
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+      <script type="text/javascript">
+      var array = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+        function add_a_number(){
+          var i ,j ,bam;
+          var random = Math.floor(Math.random()*(16));
+          var first = parseInt(random/4);
+          bam = 0;
+          if(array[first][random%4]==0){
+            array[first][random%4]=Math.random()>0.25?2:4;
+          }
+          else
+          {
+            for(i=0;i<4;i++){
+              if(bam==1)
+                break;
+              for(j=0;j<4;j++){
+                if(array[i][j]==0){
+                  array[i][j]=Math.random()>.25?2:4;
+                  console.log(i,j,"calculated");
+                  bam = 1;
+                  break;
+                }
+              }
+            }
+          }
+          render_game();
+        }
+        function render_game(){
+          console.log("render");
+          for(i=0;i<4;i++){
+            for(j=0;j<4;j++){
+              $('#cell'+i+'-'+j).html('<div style="height:100%;background:#455a64;" id ="inside_cell'+i+'-'+j+'"><span style="display:inline-block;position:relative;top:30%;font-size:25px;" class="abc">'+array[i][j]+'</span></div>');
+              if(array[i][j]==0){
+                $('#inside_cell'+i+'-'+j).addClass('card0');
+              }
+              else if(array[i][j]>0 && array[i][j]<=128){
+                $('#inside_cell'+i+'-'+j).addClass('card'+array[i][j]);
+              }
+              else if(array[i][j]>128){
+                $('#inside_cell'+i+'-'+j).addClass('card-above');
+              }
+            }
+          }
+        }
+        function handle_click(key){
+          change = false;
+          complete = true;
+          repeat = false;
+          if(key=="left"){
+            for(i=0;i<4;i++){
+              previous = 0;
+              count =0;
+              //flag = 0;
+              for(j=0;j<4;j++){
+                if(array[i][j]==0){
+                  count++;
+                }
+                else if(array[i][j]!=0){
+                  array[i][j-count]=array[i][j];
+                  if(previous == array[i][j-count]/*&&flag!=1*/&&previous!=0){
+                    array[i][j-count-1]=2*previous;
+                    array[i][j-count]=0;
+                    previous = 0;
+                    count++;
+                    //flag = 1;
+                  }
+                  else
+                    previous = array[i][j];
+                  if(count>0){
+                    array[i][j] = 0;
+                    change = true;
+                  }
+                }
+              }
+            }
+          }
+          else if(key=="right"){
+            for(i=0;i<4;i++){
+              previous = 0;
+              count =0;
+              //flag = 0;
+              for(j=3;j>=0;j--){
+                if(array[i][j]==0){
+                  count++;
+                }
+                else if(array[i][j]!=0){
+                  array[i][j+count]=array[i][j];
+                  if(previous == array[i][j+count]/*&&flag!=1*/&&previous!=0){
+                    array[i][j+count+1]=2*previous;
+                    array[i][j+count]=0;
+                    previous = 0;
+                    count++;
+                    //flag = 1;
+                  }
+                  else
+                    previous = array[i][j];
+                  if(count>0){
+                    array[i][j] = 0;
+                    change = true;
+                  }
+                }
+              }
+            }
+          }
+          else if(key=="up"){
+            for(i=0;i<4;i++){
+              previous = 0;
+              count =0;
+              //flag = 0;
+              for(j=0;j<4;j++){
+                if(array[j][i]==0){
+                  count++;
+                }
+                else if(array[j][i]!=0){
+                  array[j-count][i]=array[j][i];
+                  if(previous == array[j-count][i]/*&&flag!=1*/&&previous!=0){
+                    array[j-count-1][i]=2*previous;
+                    array[j-count][i]=0;
+                    previous = 0;
+                    count++;
+                    //flag = 1;
+                  }
+                  else
+                    previous = array[j][i];
+                  if(count>0){
+                    array[j][i] = 0;
+                    change = true;
+                  }
+                }
+              }
+            }
+          }
+          else if(key=="down"){
+            for(i=0;i<4;i++){
+              previous = 0;
+              count =0;
+              //flag = 0;
+              for(j=3;j>=0;j--){
+                if(array[j][i]==0){
+                  count++;
+                }
+                else if(array[j][i]!=0){
+                  array[j+count][i]=array[j][i];
+                  if(previous == array[j+count][i]/*&&flag!=1*/&&previous!=0){
+                    array[j+count+1][i]=2*previous;
+                    array[j+count][i]=0;
+                    previous = 0;
+                    count++;
+                    //flag = 1;
+                  }
+                  else
+                    previous = array[j][i];
+                  if(count>0){
+                    array[j][i] = 0;
+                    change = true;
+                  }
+                }
+              }
+            }
+          }
+          if(change){
+            console.log("add a number");
+            add_a_number();
+          }
+          /*render_game();*/
+          gameover();
+        }
+        function gameover(){
+          console.log("over");
+          for(i=0;i<4;i++){
+            for(j=0;j<4;j++){
+              if(array[i][j]==0){
+                complete = false;
+              }
+              if(i<3){
+                if(array[i+1][j]==array[i][j]){
+                  repeat = true;
+                }
+              }
+              if(j<3){
+                if(array[i][j+1]==array[i][j]){
+                  repeat = true;
+                }
+              }
+            }
+          }
+          if(complete&&(!repeat)){
+            alert("Game over!! please refresh the page to start new game");
+          }
+        }
+      </script>
+      <script>
+        for(var i=0;i<4;i++){
+          for(var j=0;j<4;j++){
+            $('#game').append('<div class ="col s3 m3 l3 #37474f blue-grey darken-3" style ="border:1px solid black;text-align:center;height:25%;padding:5px;" id="cell'+i+'-'+j+'"></div>');
+          }
+        }
+        add_a_number();
+      </script>
+      <script>
+      (function() {
+// initializes touch and scroll events
+        var supportTouch = $.support.touch,
+                scrollEvent = "touchmove scroll",
+                touchStartEvent = supportTouch ? "touchstart" : "mousedown",
+                touchStopEvent = supportTouch ? "touchend" : "mouseup",
+                touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
+
+ // handles swipeup and swipedown
+        $.event.special.swipeupdown = {
+            setup: function() {
+                var thisObject = this;
+                var $this = $(thisObject);
+
+                $this.bind(touchStartEvent, function(event) {
+                    var data = event.originalEvent.touches ?
+                            event.originalEvent.touches[ 0 ] :
+                            event,
+                            start = {
+                                time: (new Date).getTime(),
+                                coords: [ data.pageX, data.pageY ],
+                                origin: $(event.target)
+                            },
+                            stop;
+
+                    function moveHandler(event) {
+                        if (!start) {
+                            return;
+                        }
+
+                        var data = event.originalEvent.touches ?
+                                event.originalEvent.touches[ 0 ] :
+                                event;
+                        stop = {
+                            time: (new Date).getTime(),
+                            coords: [ data.pageX, data.pageY ]
+                        };
+
+                        // prevent scrolling
+                        if (Math.abs(start.coords[1] - stop.coords[1]) > 10) {
+                            event.preventDefault();
+                        }
+                    }
+
+                    $this
+                            .bind(touchMoveEvent, moveHandler)
+                            .one(touchStopEvent, function(event) {
+                        $this.unbind(touchMoveEvent, moveHandler);
+                        if (start && stop) {
+                            if (stop.time - start.time < 1000 &&
+                                    Math.abs(start.coords[1] - stop.coords[1]) > 30 &&
+                                    Math.abs(start.coords[0] - stop.coords[0]) < 75) {
+                                start.origin
+                                        .trigger("swipeupdown")
+                                        .trigger(start.coords[1] > stop.coords[1] ? "swipeup" : "swipedown");
+                            }
+                        }
+                        start = stop = undefined;
+                    });
+                });
+            }
+        };
+
+//Adds the events to the jQuery events special collection
+        $.each({
+            swipedown: "swipeupdown",
+            swipeup: "swipeupdown"
+        }, function(event, sourceEvent){
+            $.event.special[event] = {
+                setup: function(){
+                    $(this).bind(sourceEvent, $.noop);
+                }
+            };
+        });
+
+    })();
+    </script>
+      <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+      <script type="text/javascript">
+      $(document).keydown(function(event){
+        if(event.which == 38){
+          event.preventDefault();
+          handle_click('up');
+          console.log("up");
+        }
+        else if(event.which == 39){
+          event.preventDefault();
+          handle_click('right');
+          console.log("right");
+        }
+        else if(event.which == 40){
+          event.preventDefault();
+          handle_click('down');
+          console.log("down");
+        }
+        else if(event.which == 37){
+          event.preventDefault();
+          handle_click('left');
+          console.log("left");
+        }
+      });
+      $(document).on("pagecreate",function(){
+          $("#game").on("swipeleft",function(){
+            handle_click("left");
+          });
+          $("#game").on("swiperight",function(){
+            handle_click("right");
+          });
+          $("#game").on("swipeup",function(event){
+            event.preventDefault();
+            handle_click("up");
+          });
+          $("#game").on("swipedown",function(event){
+            event.preventDefault();
+            handle_click("down");
+          });
+
+      });
+      </script>
+    </body>
+  </html>
